@@ -32,15 +32,17 @@ def get_atom_charges(chunk):
 		reader = csv.DictReader(csvfile)
 
 		for r1, r2, a1, a2 in zip(residues1, residues2, atoms1, atoms2):
-			res1, atom1, res2, atom2 = r1[0], a1[0], r2[0], a2[0]
-		
-			for row in reader:
-				if(row['Residue'] == res1 and row['at_name'] == atom1):
-					charge1 = row['charge']
-				if(row['Residue'] == res2 and row['at_name'] == atom2):
-					charge2 = row['charge']
+			if len(r1) > 0 and len(r2) > 0 and len(a1) > 0 and len(a2) > 0: #necessary for missing atoms
+				res1, atom1, res2, atom2 = r1[0], a1[0], r2[0], a2[0]
+			
+				for row in reader:
+					if(row['Residue'] == res1 and row['at_name'] == atom1):
+						print(res1, atom1)
+						charge1 = row['charge']
+					if(row['Residue'] == res2 and row['at_name'] == atom2):
+						charge2 = row['charge']
 
-			print(res1, atom1, charge1, res2, atom2, charge2)		
+				print(res1, atom1, charge1, res2, atom2, charge2)		
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
 
