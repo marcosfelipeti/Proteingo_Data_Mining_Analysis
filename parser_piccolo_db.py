@@ -1,4 +1,5 @@
 import pandas as pd
+import csv
 
 #Definitions:
 #path,file names, and chunksize
@@ -15,28 +16,31 @@ def read_file(file):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
 def process(chunk):    	
-	#print (file)
+	print (file)
 	#print (chunk.head())
 	get_atom_charges(chunk)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
 def get_atom_charges(chunk):
 
-	res1 = chunk['res1']
-	res2 = chunk['res2']
-	atom1 = chunk['atom1']
-	atom2 = chunk['atom2']
-	print(res1, atom1, res2, atom2)
+	residues1 = chunk.res1.str.split('\n')
+	residues2 = chunk.res2.str.split('\n')
+	atoms1 = chunk.atom1.str.split('\n')
+	atoms2 = chunk.atom2.str.split('\n')
 
-	rows = pd.read_csv("charge.csv")
-	
-	for row in rows:
-		if(row['Residue'] == res1 and row['at_name'] == atom1):
-			charge1 = row['carge']
-		if(row['Residue'] == res2 and row['at_name'] == atom2):
-			charge2 = row['carge']
+	with open('charge.csv') as csvfile:
+		reader = csv.DictReader(csvfile)
 
-	print(res1, atom1, charge1, res2, atom2, charge2)		
+		for r1, r2, a1, a2 in zip(residues1, residues2, atoms1, atoms2):
+			res1, atom1, res2, atom2 = r1[0], a1[0], r2[0], a2[0]
+		
+			for row in reader:
+				if(row['Residue'] == res1 and row['at_name'] == atom1):
+					charge1 = row['charge']
+				if(row['Residue'] == res2 and row['at_name'] == atom2):
+					charge2 = row['charge']
+
+			print(res1, atom1, charge1, res2, atom2, charge2)		
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
 
