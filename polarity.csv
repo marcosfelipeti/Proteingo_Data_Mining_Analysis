@@ -1,0 +1,21 @@
+residue,polarity,hydropathy index
+ASP,polar,−3.5
+GLU,polar,−3.5
+ARG,polar,−4.5
+HIS,polar,−3.2
+LYS,polar,−3.9
+ASN,polar,−3.5
+GLN,polar,−3.5
+SER,polar,−0.8
+THR,polar,−0.7
+TYR,polar,−1.3
+ALA,nonpolar,1.8
+CYS,nonpolar,2.5
+GLY,nonpolar,−0.4
+ILE,nonpolar,4.5
+LEU,nonpolar,3.8
+MET,nonpolar,1.9
+PHE,nonpolar,2.8
+PRO,nonpolar,−1.6
+TRP,nonpolar,−0.9
+VAL,nonpolar,4.2
