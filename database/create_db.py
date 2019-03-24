@@ -6,6 +6,7 @@ from mysql.connector import errorcode
 #--------------------------------------------------------------------------------------------------------------------------------------------
 
 DB_NAME = 'piccolo_with_features'
+TABLE_NAMES = ['is_hb', 'is_hydrophobic', 'is_ionic', 'is_aromatic', 'is_proximal']
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
 def create_database(cursor):
@@ -15,6 +16,12 @@ def create_database(cursor):
     except mysql.connector.Error as err:
         print("Failed creating database: {}".format(err))
         exit(1)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------
+def create_tables():
+	for table_name in TABLE_NAMES:
+		print (table_name)
+
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
 def main():

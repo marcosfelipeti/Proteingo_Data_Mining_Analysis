@@ -5,6 +5,7 @@ import csv
 #Definitions:
 #path,file names, and chunksize
 basic_path = '/scratch/Second_analysis_proteingo/contacts_second_paper/'
+basic_path_to_save = '/scratch/Second_analysis_proteingo/contacts_with_features/'
 contacts_files = ['is_hb.csv', 'is_hydrophobe.csv', 'is_ionic.csv', 'is_arom.csv', 'is_no_contact.csv']  #not uploaded here due to huge size (~2.5GB)
 
 chunksize = 10 ** 6
@@ -13,33 +14,61 @@ chunksize = 10 ** 6
 def main():
 	for contact_file in contacts_files:
 		file = basic_path + contact_file
-		read_file(file)
+		read_file(file, contact_file)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------		
-def read_file(file):	
+def read_file(file, contact_file):	
 	print (file)
 
 	for chunk in pd.read_csv(file, chunksize=chunksize, header=None, 
 		names=['pdb', 'chain_res1', 'chain_number1', 'res1', 'atom1', 
 		'chain_res2', 'chain_number2', 'res2', 'atom2', 'distance'],
 		keep_default_na=False):
-		process(chunk)
+		process(chunk, contact_file)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
-def process(chunk):    	
-
+def process(chunk, contact_file):    	
+	pdbs = chunk.pdb.astype(str).str.split('\n')
 	residues1 = chunk.res1.str.split('\n')
 	residues2 = chunk.res2.str.split('\n')
 	atoms1 = chunk.atom1.str.split('\n')
 	atoms2 = chunk.atom2.str.split('\n')
+	chains_res1 = chunk.chain_res1.str.split('\n')
+	chains_res2 = chunk.chain_res2.str.split('\n')
+	chains_number_res1 = chunk.chain_number1.astype(str).str.split('\n')
+	chains_number_res2 = chunk.chain_number2.astype(str).str.split('\n')
+	distances = chunk.distance.astype(str).str.split('\n')
 
-	for res1, res2, atom1, atom2 in zip(residues1, residues2, atoms1, atoms2):
-		polarity_res1, polarity_res2 = get_residue_polarity(res1[0], res2[0])
-		type_residue1, type_residue2 = get_amino_acid_type(res1[0], res2[0])
-		charge_at1, charge_at2 = get_atom_charges(res1[0], res2[0], atom1[0], atom2[0])
-		covalent_bonds_number_at1, covalent_bonds_number_at2 = get_atoms_covalent_bonds_number(res1[0], res2[0], atom1[0], atom2[0])
+	with open(basic_path_to_save+contact_file, 'w') as myfile:
+		print('Saving data to {0}'.format(contact_file))
 
-		print(res1[0], polarity_res1, type_residue1, atom1[0], charge_at1, covalent_bonds_number_at1, res2[0], polarity_res2, type_residue2, atom2[0], charge_at2, covalent_bonds_number_at1)
+		for pdb, res1, res2, atom1, atom2, chain_res1, chain_res2, chain_number1, chain_number2, distance in zip(pdbs,residues1, residues2, atoms1, atoms2, chains_res1, chains_res2, chains_number_res1, chains_number_res2, distances):
+			polarity_res1, polarity_res2 = get_residue_polarity(res1[0], res2[0])
+			type_residue1, type_residue2 = get_amino_acid_type(res1[0], res2[0])
+			charge_at1, charge_at2 = get_atom_charges(res1[0], res2[0], atom1[0], atom2[0])
+			covalent_bonds_number_at1, covalent_bonds_number_at2 = get_atoms_covalent_bonds_number(res1[0], res2[0], atom1[0], atom2[0])
+
+			row = [pdb[0],
+				chain_res1[0],
+				chain_number1[0],
+				res1[0], 
+				polarity_res1, 
+				type_residue1, 
+				atom1[0], 
+				charge_at1, 
+				covalent_bonds_number_at1, 
+				chain_res2[0],
+				chain_number2[0],
+				res2[0], 
+				polarity_res2, 
+				type_residue2, 
+				atom2[0], 
+				charge_at2, 
+				covalent_bonds_number_at1,
+				distance[0]]
+
+			wr = csv.writer(myfile)
+			wr.writerow(row)
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
