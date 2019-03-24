@@ -5,7 +5,7 @@ import csv
 #Definitions:
 #path,file names, and chunksize
 basic_path = '/scratch/Second_analysis_proteingo/contacts_second_paper/'
-contacts_files = ['is_hb.csv', 'is_hydrophobe.csv', 'is_ionic.csv', 'is_arom.csv', 'is_no_contact.csv']
+contacts_files = ['is_hb.csv', 'is_hydrophobe.csv', 'is_ionic.csv', 'is_arom.csv', 'is_no_contact.csv']  #not uploaded here due to huge size (~2.5GB)
 
 chunksize = 10 ** 6
 
@@ -27,7 +27,6 @@ def read_file(file):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
 def process(chunk):    	
-	#print (chunk.head())
 
 	residues1 = chunk.res1.str.split('\n')
 	residues2 = chunk.res2.str.split('\n')
@@ -48,7 +47,7 @@ def get_residue_polarity(res1, res2):
 
 	polarity_res1, polarity_res2 = '', ''
 
-	with open('polarity.csv') as csvfile:
+	with open('../features/polarity.csv') as csvfile:
 		reader = csv.DictReader(csvfile)
 		for row in reader:
 			if res1 == row['residue']:
@@ -63,7 +62,7 @@ def get_amino_acid_type(res1, res2):
 
 	type_residue1, type_residue2 = '', ''
 
-	with open('amino_acid_types.csv') as csvfile:
+	with open('../features/amino_acid_types.csv') as csvfile:
 		reader = csv.DictReader(csvfile)
 		for row in reader:
 			if res1 == row['residue']:
@@ -78,7 +77,7 @@ def get_atom_charges(res1, res2, atom1, atom2):
 
 	charge_at1, charge_at2 = '', ''
 
-	with open('charge.csv') as csvfile:
+	with open('../features/charge.csv') as csvfile:
 		reader = csv.DictReader(csvfile)	
 		for row in reader:
 			if(row['Residue'] == res1 and row['at_name'] == atom1):
@@ -91,7 +90,7 @@ def get_atom_charges(res1, res2, atom1, atom2):
 #--------------------------------------------------------------------------------------------------------------------------------------------
 def get_atoms_covalent_bonds_number(res1, res2, atom1, atom2):
 
-	with open("covalent.txt") as reader:
+	with open("../features/covalent.txt") as reader:
 		file_content = reader.read().splitlines()	
 
 	covalent_bonds_number_at1, covalent_bonds_number_at2 = 0, 0
@@ -105,6 +104,7 @@ def get_atoms_covalent_bonds_number(res1, res2, atom1, atom2):
 			covalent_bonds_number_at2 = walk_through_bonds_for_covalent_bonds(i, content, line, file_content, atom2)
 
 	return covalent_bonds_number_at1, covalent_bonds_number_at2		
+
 
 def walk_through_bonds_for_covalent_bonds(i, content, line, file_content, atom):
 
