@@ -18,16 +18,15 @@ def main():
 
 #--------------------------------------------------------------------------------------------------------------------------------------------		
 def read_file(file, contact_file):	
-	print (file)
 
 	for chunk in pd.read_csv(file, chunksize=chunksize, header=None, 
 		names=['pdb', 'chain_res1', 'chain_number1', 'res1', 'atom1', 
 		'chain_res2', 'chain_number2', 'res2', 'atom2', 'distance'],
 		keep_default_na=False):
-		process(chunk, contact_file)
+		process_and_save_data(chunk, contact_file)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
-def process(chunk, contact_file):    	
+def process_and_save_data(chunk, contact_file):    	
 	pdbs = chunk.pdb.astype(str).str.split('\n')
 	residues1 = chunk.res1.str.split('\n')
 	residues2 = chunk.res2.str.split('\n')
@@ -39,7 +38,7 @@ def process(chunk, contact_file):
 	chains_number_res2 = chunk.chain_number2.astype(str).str.split('\n')
 	distances = chunk.distance.astype(str).str.split('\n')
 
-	with open(basic_path_to_save+contact_file, 'w') as myfile:
+	with open(basic_path_to_save+contact_file, 'a') as myfile:
 		print('Saving data to {0}'.format(contact_file))
 
 		for pdb, res1, res2, atom1, atom2, chain_res1, chain_res2, chain_number1, chain_number2, distance in zip(pdbs,residues1, residues2, atoms1, atoms2, chains_res1, chains_res2, chains_number_res1, chains_number_res2, distances):
